@@ -1,0 +1,6 @@
+c:\users\renuka\documents\visual studio 2015\Projects\ChatRoom_Renuka\ChatRoom_Renuka\bin\Debug\ChatRoom_Renuka.exe.config
+c:\users\renuka\documents\visual studio 2015\Projects\ChatRoom_Renuka\ChatRoom_Renuka\bin\Debug\ChatRoom_Renuka.exe
+c:\users\renuka\documents\visual studio 2015\Projects\ChatRoom_Renuka\ChatRoom_Renuka\bin\Debug\ChatRoom_Renuka.pdb
+c:\users\renuka\documents\visual studio 2015\Projects\ChatRoom_Renuka\ChatRoom_Renuka\obj\Debug\ChatRoom_Renuka.csprojResolveAssemblyReference.cache
+c:\users\renuka\documents\visual studio 2015\Projects\ChatRoom_Renuka\ChatRoom_Renuka\obj\Debug\ChatRoom_Renuka.exe
+c:\users\renuka\documents\visual studio 2015\Projects\ChatRoom_Renuka\ChatRoom_Renuka\obj\Debug\ChatRoom_Renuka.pdb
