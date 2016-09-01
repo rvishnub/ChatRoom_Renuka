@@ -42,8 +42,8 @@ namespace ChatRoom_Renuka
         public TcpClient GetActiveUser(string name)
         {
             int nameIndex = userKeys.IndexOf(name);
-            TcpClient value = userValues[nameIndex];
-            return value;
+            TcpClient client = userValues[nameIndex];
+            return client;
         }
             //else
             //{
@@ -83,6 +83,14 @@ namespace ChatRoom_Renuka
                     Console.WriteLine("That name has not been found.");
                 }
             }
+        }
+
+        public string GetUserIPAddressString(TcpClient client)
+        {
+            IPAddress userIPAddress = ((IPEndPoint)client.Client.RemoteEndPoint).Address;
+            byte[] userIPAddressByt = userIPAddress.GetAddressBytes();
+            string userIPAddressStr = chatroom.ToString(userIPAddressByt);
+            return userIPAddressStr;
         }
 
         public IEnumerator GetEnumerator()

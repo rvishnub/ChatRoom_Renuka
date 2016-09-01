@@ -27,6 +27,7 @@ namespace ChatRoom_Renuka
         public Dictionary dict;
         public byte[] buffer;
 
+
         public string GetUserName()
         {
             SendUserNameRequest();
@@ -82,17 +83,37 @@ namespace ChatRoom_Renuka
             string messageStr = System.Text.Encoding.ASCII.GetString(messageByt, 0, messageByt.Length);
             return messageStr;
         }
-        public void Broadcast(byte[] messageByt)
+
+        //public void DoChat()
+        //{
+        //    int numberOfBytesReceived = 1;
+        //    while ((numberOfBytesReceived) != 0)
+        //    {
+        //        //PARSE TO STRING
+        //        numberOfBytesReceived = this.chatroom.stream.Read(buffer, 0, 100);
+        //        string messageStr = System.Text.Encoding.ASCII.GetString(chatroom.buffer, 0, numberOfBytesReceived);
+        //        Console.WriteLine("A message has been received:");
+        //        Console.WriteLine(messageStr);
+
+        //        chatroom.Broadcast(messageStr);
+        //        Console.WriteLine("The message has been broadcast to all users.");
+        //    }
+        //}
+
+
+        public void Broadcast(string messageStr)
         {
             IPEndPoint groupEP = new IPEndPoint((IPAddress.Parse("10.2.20.23")), 0);
             EndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
+            byte[] messageByt = Encoding.ASCII.GetBytes(messageStr);
 
-            try
-            {
-                foreach (string name in dict.userKeys)
+            //try
+            //{
+                foreach (string name in chatroom.dict.userKeys)
                 {
-                    TcpClient user = dict.GetActiveUser(name);
-                    IPEndPoint userEP = new IPEndPoint(userIPAddress, 0);
+                    TcpClient user = chatroom.dict.GetActiveUser(name);
+                
+                    IPEndPoint userEP = ((IPEndPoint)user.Client.RemoteEndPoint);
 
                     if (user.Connected == true)
                     {
@@ -106,12 +127,13 @@ namespace ChatRoom_Renuka
                     }
                 }
 
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine(e.ToString());
+            //}
         }
+
 
 
     }

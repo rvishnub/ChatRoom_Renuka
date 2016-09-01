@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Net;
 using System.Net.Sockets;
 using System.IO;
@@ -18,14 +18,15 @@ namespace ChatRoom_Renuka
             IPAddress ipAddress = IPAddress.Parse("10.2.20.21");
             int port = 9218;
             TcpListener server = new TcpListener(ipAddress, port);
+            server.Start();
+
 
 
             try
             {
-                server.Start();
 
                 //CREATE BUFFER
-                chatroom.buffer = new Byte[1024];
+                chatroom.buffer = new Byte[100];
                 string messageStr = "";
                 Dictionary dict = new Dictionary(chatroom);
 
@@ -36,6 +37,7 @@ namespace ChatRoom_Renuka
 
                     //ACCEPT CLIENT
                     TcpClient client = server.AcceptTcpClient();
+
                     Console.WriteLine("Connected to a User!");
 
 
@@ -44,50 +46,53 @@ namespace ChatRoom_Renuka
                     //CREATE STREAM
                     NetworkStream stream = client.GetStream();
 
-                    int numberOfBytesRead = 0;
                     //WELCOME
-
-                    messageStr = chatroom.ToString(chatroom.buffer);
-                    Console.WriteLine("Received: '{0}'", messageStr);
-
-                    //// Process the data sent by the client.  DO I NEED THIS?
-                    //messageStr = messageStr.ToUpper();
+                    int numberOfBytesReceived = stream.Read(chatroom.buffer, 0, 100);
+                    messageStr = System.Text.Encoding.ASCII.GetString(chatroom.buffer, 0, numberOfBytesReceived);
+                    Console.WriteLine("A message has been received:");
+                    Console.WriteLine(messageStr);
 
                     string responseStr = "You are connected to Renuka's Chat Room.";
                     byte[] responseByt = chatroom.ToBytes(responseStr);
+                    stream.Write(responseByt, 0, responseByt.Length);
+
                     //chatroom.SetUserName();
 
                     responseStr = "What is your user name?";
                     Console.WriteLine(responseStr);
-                    responseByt = Encoding.ASCII.GetBytes(responseStr);
+                    responseByt = chatroom.ToBytes(responseStr);
                     stream.Write(responseByt, 0, responseByt.Length);
 
-                    int bytesReceived = stream.Read(chatroom.buffer, 0, chatroom.buffer.Length);
-                    int numberBytesInClientResponse = stream.Read(responseByt, 0, bytesReceived);
-                    string clientResponseStr = Encoding.ASCII.GetString(responseByt);
-                    Console.WriteLine(clientResponseStr);
-
+                    numberOfBytesReceived = stream.Read(chatroom.buffer, 0, 100);
+                    string userName = System.Text.Encoding.ASCII.GetString(chatroom.buffer, 0, numberOfBytesReceived);
+                    Console.WriteLine(userName);
 
                     //chatroom.SetUserIPAddress(chatroom.userName);
-                    IPAddress userIPAddress = ((IPEndPoint)client.Client.RemoteEndPoint).Address;
-                    Console.WriteLine(userIPAddress);
 
+                    //ADD TO DICTIONARY
+                    dict.dictForUsers.Add(userName, client);
 
                     //DO CHAT
-                    while ((numberOfBytesRead = stream.Read(chatroom.buffer, 0, chatroom.buffer.Length)) != 0)
+                    //Thread chatThread = new Thread(chatroom.DoChat);
+                    //chatThread.Start();
+
+                    numberOfBytesReceived = 1;
+                    while ((numberOfBytesReceived) != 0)
                     {
                         //PARSE TO STRING
-                        byte[] messageByt = chatroom.buffer;
-                        messageStr = chatroom.ToString(messageByt);
-                        Console.WriteLine("Received: '{0}'", messageStr);
+                        numberOfBytesReceived = stream.Read(chatroom.buffer, 0, 100);
+                        messageStr = System.Text.Encoding.ASCII.GetString(chatroom.buffer, 0, numberOfBytesReceived);
+                        Console.WriteLine("A message has been received:");
+                        Console.WriteLine(messageStr);
 
-                        chatroom.Broadcast(messageByt);
-
+                        chatroom.Broadcast(messageStr);
+                        Console.WriteLine("The message has been broadcast to all users.");
                     }
-
                     //CLOSE THE CONNECTION
                     client.Close();
+
                 }
+
             }
 
             finally
@@ -95,21 +100,7 @@ namespace ChatRoom_Renuka
                 //SHUT DOWN THE SERVER
                 server.Stop();
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         }
     }
 }
+
